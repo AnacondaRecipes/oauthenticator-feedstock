@@ -1,5 +1,5 @@
 {% set name = "oauthenticator" %}
-{% set version = "14.1.0" %}
+{% set version = "15.1.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,34 +7,45 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: ad0346d5d250fa6a684281459a88c2c2c3b83426697581ba732487f4421815cc
+  sha256: d1d9873c9b66e1af973291968b9573d25378bd8c647f30d73b8d8fb27b1a0b85
 
 build:
   number: 0
-  noarch: python
+  skip: True  # [py<36]
   script: {{ PYTHON }} -m pip install --no-deps . -vv
 
 requirements:
   host:
-    - python >=3.6
+    - python
     - pip
+    - setuptools
+    - wheel
   run:
-    - python >=3.6
-    - jupyterhub >=0.5
+    - python
+    - jsonschema
+    - jupyterhub >=1.2
+    - requests
+    - ruamel.yaml
 
 test:
   imports:
     - oauthenticator
+  requires:
+    - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/jupyterhub/oauthenticator
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
+  license_url: https://github.com/jupyterhub/oauthenticator/blob/main/LICENSE
   summary: OAuth + JupyterHub Authenticator = OAuthenticator
 
   doc_url: https://jhubdocs.readthedocs.io/en/latest/oauthenticator/
   dev_url: https://github.com/jupyterhub/oauthenticator
+  doc_source_url: https://github.com/jupyterhub/oauthenticator/tree/main/docs/source
 
 extra:
   recipe-maintainers:
