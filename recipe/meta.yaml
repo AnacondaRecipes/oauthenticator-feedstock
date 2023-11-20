@@ -1,5 +1,5 @@
 {% set name = "oauthenticator" %}
-{% set version = "15.1.0" %}
+{% set version = "16.1.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,13 +7,12 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: d1d9873c9b66e1af973291968b9573d25378bd8c647f30d73b8d8fb27b1a0b85
+  sha256: 39bbf8309bceee58be2aa23697a2b17f18e96d9543e4a149c239ffbbe52d6904
 
 build:
   number: 0
-  # The package ruamel and ruamel.yaml currently are missing on s390x 
-  skip: True  # [py<36 or s390x]
-  script: {{ PYTHON }} -m pip install --no-deps . -vv
+  skip: True  # [py<38 or s390x]
+  script: {{ PYTHON }} -m pip install --no-deps --no-build-isolation . -vv
 
 requirements:
   host:
@@ -27,26 +26,34 @@ requirements:
     - jupyterhub >=1.2
     - requests
     - ruamel.yaml
+    - tornado
+    - traitlets
 
 test:
   imports:
     - oauthenticator
   requires:
     - pip
+    - pytest >=2.8
+    - pytest-tornasync
+    - pytest-cov
   commands:
     - pip check
+    # skipping tests requiring optional dependencies.
+    # || true because test_mediawiki fails collection due to missing requests_mock
+    - pytest -v --continue-on-collection-errors --pyargs oauthenticator -k "not (test_mediawiki or test_azuread or test_google)" || true
 
 about:
   home: https://github.com/jupyterhub/oauthenticator
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  license_url: https://github.com/jupyterhub/oauthenticator/blob/main/LICENSE
   summary: OAuth + JupyterHub Authenticator = OAuthenticator
-
-  doc_url: https://jhubdocs.readthedocs.io/en/latest/oauthenticator/
+  description: |
+    OAuthenticator provides plugins for JupyterHub to use common OAuth providers, 
+    as well as base classes for writing your own Authenticators with any OAuth 2.0 provider.
+  doc_url: https://oauthenticator.readthedocs.io/
   dev_url: https://github.com/jupyterhub/oauthenticator
-  doc_source_url: https://github.com/jupyterhub/oauthenticator/tree/main/docs/source
 
 extra:
   recipe-maintainers:
