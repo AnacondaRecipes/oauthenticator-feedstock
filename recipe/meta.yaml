@@ -1,5 +1,5 @@
 {% set name = "oauthenticator" %}
-{% set version = "16.1.1" %}
+{% set version = "17.1.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 39bbf8309bceee58be2aa23697a2b17f18e96d9543e4a149c239ffbbe52d6904
+  sha256: d915acad2f96d3d018f705afbccfe9633b0cd31cea730599612bf8042b1e822c
 
 build:
   number: 0
@@ -23,10 +23,11 @@ requirements:
   run:
     - python
     - jsonschema
-    - jupyterhub >=1.2
+    - jupyterhub >=2.2
     - requests
     - ruamel.yaml
     - tornado
+    - pyjwt >=2
     - traitlets
 
 test:
@@ -50,7 +51,7 @@ about:
   license_file: LICENSE
   summary: OAuth + JupyterHub Authenticator = OAuthenticator
   description: |
-    OAuthenticator provides plugins for JupyterHub to use common OAuth providers, 
+    OAuthenticator provides plugins for JupyterHub to use common OAuth providers,
     as well as base classes for writing your own Authenticators with any OAuth 2.0 provider.
   doc_url: https://oauthenticator.readthedocs.io/
   dev_url: https://github.com/jupyterhub/oauthenticator
