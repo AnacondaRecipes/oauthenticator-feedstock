@@ -1,17 +1,17 @@
 {% set name = "oauthenticator" %}
-{% set version = "17.1.0" %}
+{% set version = "17.3.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: d915acad2f96d3d018f705afbccfe9633b0cd31cea730599612bf8042b1e822c
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: e5d90cb2411fff3dc6fcc1633468233c0e0e0239422c087c7734d1685055b8f3
 
 build:
   number: 0
-  skip: True  # [py<38 or s390x]
+  skip: true  # [py<38]
   script: {{ PYTHON }} -m pip install --no-deps --no-build-isolation . -vv
 
 requirements:
@@ -29,21 +29,30 @@ requirements:
     - tornado
     - pyjwt >=2
     - traitlets
+  run_constrained:
+    - mwoauth >=0.3.8
+
+# ModuleNotFoundError: No module named 'mwoauth'
+{% set ignore_tests = " --ignore=oauthenticator/tests/test_mediawiki.py" %}
 
 test:
+  source_files:
+    - oauthenticator
   imports:
     - oauthenticator
+    - oauthenticator.azuread
+    - oauthenticator.github
+    - oauthenticator.oauth2
   requires:
     - pip
-    - pytest >=2.8
+    - pytest
     - pytest-tornasync
     - pytest-cov
+    - requests-mock
   commands:
     - pip check
-    # skipping tests requiring optional dependencies.
-    # || true because test_mediawiki fails collection due to missing requests_mock
-    - pytest -v --continue-on-collection-errors --pyargs oauthenticator -k "not (test_mediawiki or test_azuread or test_google)" || true
-
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v {{ ignore_tests }} oauthenticator
 about:
   home: https://github.com/jupyterhub/oauthenticator
   license: BSD-3-Clause
@@ -53,7 +62,7 @@ about:
   description: |
     OAuthenticator provides plugins for JupyterHub to use common OAuth providers,
     as well as base classes for writing your own Authenticators with any OAuth 2.0 provider.
-  doc_url: https://oauthenticator.readthedocs.io/
+  doc_url: https://oauthenticator.readthedocs.io
   dev_url: https://github.com/jupyterhub/oauthenticator
 
 extra:
