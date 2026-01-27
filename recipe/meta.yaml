@@ -1,5 +1,6 @@
 {% set name = "oauthenticator" %}
 {% set version = "17.3.0" %}
+{% set ignore_tests = " --ignore=oauthenticator/tests/test_mediawiki.py" %}
 
 package:
   name: {{ name|lower }}
@@ -10,7 +11,7 @@ source:
   sha256: e5d90cb2411fff3dc6fcc1633468233c0e0e0239422c087c7734d1685055b8f3
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<38]
   script: {{ PYTHON }} -m pip install --no-deps --no-build-isolation . -vv
 
@@ -33,8 +34,6 @@ requirements:
     - mwoauth >=0.3.8
 
 # ModuleNotFoundError: No module named 'mwoauth'
-{% set ignore_tests = " --ignore=oauthenticator/tests/test_mediawiki.py" %}
-
 test:
   source_files:
     - oauthenticator
@@ -53,6 +52,7 @@ test:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
     - pytest -v {{ ignore_tests }} oauthenticator
+
 about:
   home: https://github.com/jupyterhub/oauthenticator
   license: BSD-3-Clause
