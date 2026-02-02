@@ -1,6 +1,5 @@
 {% set name = "oauthenticator" %}
 {% set version = "17.3.0" %}
-{% set ignore_tests = " --ignore=oauthenticator/tests/test_mediawiki.py" %}
 
 package:
   name: {{ name|lower }}
@@ -34,6 +33,8 @@ requirements:
     - mwoauth >=0.3.8
 
 # ModuleNotFoundError: No module named 'mwoauth'
+{% set ignore_tests = " --ignore=oauthenticator/tests/test_mediawiki.py" %}
+
 test:
   source_files:
     - oauthenticator
