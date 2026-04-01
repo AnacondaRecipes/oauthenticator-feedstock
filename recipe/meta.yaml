@@ -20,8 +20,6 @@ requirements:
     - pip
     - hatchling
     - hatch-requirements-txt
-    - setuptools
-    - wheel
   run:
     - python
     - jsonschema
